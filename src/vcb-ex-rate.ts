@@ -12,23 +12,26 @@ function preProcess(value: string, name: string) {
   return value.trim();
 }
 
-type ExRate = {
-  '$': {
-    CurrencyCode: string;
-    CurrencyName: string;
-    Buy: number;
-    Transfer: number;
-    Sell: number;
-  };
+export type ExRateData ={
+  CurrencyCode: string;
+  CurrencyName: string;
+  Buy: number;
+  Transfer: number;
+  Sell: number;
 };
 
-const getExRate = async (): Promise<String> => { 
+type ExRate = {
+  '$': ExRateData;
+};
+
+
+const getExRate = async (): Promise<ExRateData[]> => { 
   const res = await fetch(VCB_EX_RATE)
   const data = await res.text()
   console.log(data)
 
   // process XML data
-  const extracted: Object[] = [];
+  const extracted: ExRateData[] = [];
   parseString(data, {
     // valueProcessors: [preProcess],
     attrValueProcessors: [preProcess],
@@ -37,7 +40,7 @@ const getExRate = async (): Promise<String> => {
       console.error(err);
       return;
     }
-    console.log('parsed==>', result);
+    // console.log('parsed==>', result);
     extracted.push(
       ...(result.ExrateList.Exrate as ExRate[]).map((item) => { 
         const _item = item['$'];
@@ -52,10 +55,7 @@ const getExRate = async (): Promise<String> => {
     );
   });
 
-  console.log('exRateList==>', extracted);
-
-  return res.statusText;
-  // return data
+  return extracted;
 };
 
 export default getExRate;
