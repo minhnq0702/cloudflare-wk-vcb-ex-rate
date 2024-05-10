@@ -61,7 +61,7 @@ export default {
 
 			// * wait for all jobs to finish
 			let res = await Promise.all(jobs);
-			console.log('All jobs done:', res);
+			// console.log('All jobs done:', res);
 
 		} catch (error) {
 			console.error('Error while producing message:', error);
